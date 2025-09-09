@@ -1,0 +1,8 @@
+from back.services.ObstacleServices import ObstacleServices
+class ObstacleController:
+    def __init__(self):
+        self.service= ObstacleServices()
+    
+
+    def createObstacle(self,id,x,y,tipo,x1):
+        return self.service.createObstacle(id,x,y,tipo,x1)

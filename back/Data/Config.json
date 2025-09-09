@@ -1,0 +1,9 @@
+[
+    {
+        "distanciaTotal": 2000,
+        "velocidad": 15,
+        "refresco_ms": 300,
+        "salto_altura": 10,
+        "color": "#FFFFFF"
+    }
+]
