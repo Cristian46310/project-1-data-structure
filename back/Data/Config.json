@@ -1,9 +1,13 @@
 [
     {
-        "distanciaTotal": 2000,
-        "velocidad": 15,
-        "refresco_ms": 300,
-        "salto_altura": 10,
-        "color": "#FFFFFF"
+        "distanciaTotal": 1500,
+        "velocidad": 20,
+        "refresco_ms": 200,
+        "salto_altura": 75,
+        "color": "rojo",
+        "x0": 10,
+        "x1": 150,
+        "y1": 10,
+        "y2": 10
     }
 ]

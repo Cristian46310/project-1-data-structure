@@ -8,3 +8,6 @@ class ObstacleServices:
     def createObstacle(self,id,x,y,tipo,x1):
         obstacles=Obstaculos(id,x,y,tipo,x1)
         return self.obstacle.addObstacle(obstacles)
+    
+    def deleteObstacle(self,id):
+        return self.obstacle.deleteObstacle(id)

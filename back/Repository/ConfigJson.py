@@ -28,9 +28,9 @@ class ConfigJson:
             with open(self.RUTA_DE_CONFIG, 'r') as file:
                 settings = json.load(file)
         settings.append(newSetting)
-        self.save(settings)
+        self.saveSettings(settings)
 
-    def updateSettings(self, newdistanciaTotal,newvelocidad,newrefresco_ms,newsalto_altura,newcolor):
+    def updateSettings(self, newdistanciaTotal,newvelocidad,newrefresco_ms,newsalto_altura,newcolor,newx0,newx1,newy1):
         if not os.path.exists(self.RUTA_DE_CONFIG) or os.path.getsize(self.RUTA_DE_CONFIG)==0:
             print("No hay datos en el archivo")
         else:
@@ -42,5 +42,9 @@ class ConfigJson:
                 settings[0]['refresco_ms']=newrefresco_ms
                 settings[0]['salto_altura']=newsalto_altura
                 settings[0]['color']=newcolor
+                settings[0]['x0']=newx0
+                settings[0]['x1']=newx1
+                settings[0]['y1']=newy1
+                settings[0]['y2']=newy1
             self.saveSettings(settings)
         

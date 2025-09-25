@@ -6,3 +6,6 @@ class ObstacleController:
 
     def createObstacle(self,id,x,y,tipo,x1):
         return self.service.createObstacle(id,x,y,tipo,x1)
+    
+    def deleteObstacle(self,id):
+        return self.service.deleteObstacle(id)
