@@ -16,7 +16,7 @@ obstacle_controller.createObstacle(3, 90, 140, "bache", 100)
 # Prueba: intentar agregar obstáculo repetido (por x)
 obstacle_controller.createObstacle(4, 50, 200, "roca", 60)  # Debe mostrar mensaje de repetido
 
-Prueba: eliminar obstáculo
+# Prueba: eliminar obstáculo
 print("Eliminando obstáculo con id=2...")
 obstacle_controller.deleteObstacle(3)
 
