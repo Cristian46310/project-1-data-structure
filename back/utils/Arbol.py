@@ -132,7 +132,7 @@ class ArbolAVL:
         obtacle_json=ObstacleJson()
         obstacles=obtacle_json.readJsonObstacle()
         if not obstacles:
-            return None
+            return NoneW
         else:
             for obs in obstacles:
                 self.insertar(obs['id'],obs)
