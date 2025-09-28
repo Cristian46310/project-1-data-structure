@@ -160,7 +160,7 @@ class ArbolAVL:
         obtacle_json=ObstacleJson()
         obstacles=obtacle_json.readJsonObstacle()
         if not obstacles:
-            return NoneW
+            return None
         else:
             for obs in obstacles:
                 self.insertar(obs['id'],obs)
@@ -174,7 +174,7 @@ class ArbolAVL:
             nodo = self.raiz
         
         if nodo is None:
-            return  # ✅ Caso base: si no hay nodo, no seguimos
+            return  
 
         # Subárbol derecho
         self.mostrarArbol(nodo.derecha, nivel + 1, "Der")
