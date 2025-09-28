@@ -10,6 +10,34 @@ class NodoAVL:
         self.altura=1
     
 class ArbolAVL:
+    """"
+    AVL Tree implementation for storing and managing obstacles with spatial data.
+    Attributes:
+        raiz (NodoAVL): The root node of the AVL tree.
+    Methods:
+        altura(nodo):
+            Returns the height of a given node.
+        obtenerFactorBalance(nodo):
+            Calculates and returns the balance factor of a node.
+        rotacionDerecha(y):
+            Performs a right rotation on the given subtree rooted at node y.
+        rotacionIzquierda(x):
+            Performs a left rotation on the given subtree rooted at node x.
+        insertar(clave, datos):
+            Inserts a new node with the specified key and data into the AVL tree.
+        preOrden():
+            Prints the nodes of the tree in pre-order traversal.
+        inOrden():
+            Prints the nodes of the tree in in-order traversal.
+        postOrden():
+            Prints the nodes of the tree in post-order traversal.
+        consultarDistancia(x_min, x_max, y_min, y_max):
+            Returns a list of obstacle data whose 'x' and 'y' values are within the specified range.
+        insertarJson():
+            Reads obstacle data from a JSON source and inserts each obstacle into the AVL tree.
+        mostrarArbol(nodo=None, nivel=0, lado="Raíz"):
+            Recursively prints the structure of the tree for visualization and debugging purposes.
+        """
     def __init__(self):
         self.raiz=None
     

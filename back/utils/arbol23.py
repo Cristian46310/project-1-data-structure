@@ -2,7 +2,7 @@ import json  # Importa la librería para manejar archivos JSON
 
 # Clase que representa un nodo del árbol 2-3
 class Node:
-    def _init_(self, data=None):
+    def __init__(self, data=None):
         # Constructor: inicializa el nodo con datos y lo marca como hoja
         self.data = [] if data is None else [data]  # Lista de obstáculos (máximo 2)
         self.children = []  # Lista de hijos (0, 2 o 3 dependiendo del tipo de nodo)
@@ -19,7 +19,31 @@ class Node:
 
 # Clase que representa el árbol 2-3 completo
 class Tree23:
-    def _init_(self):
+    """
+    A 2-3 Tree implementation for storing obstacles with coordinate and ID information.
+    Methods
+    -------
+    __init__():
+        Initializes an empty 2-3 tree with no root.
+    insert(obstacle):
+        Inserts an obstacle into the tree. If the tree is empty, creates the root node.
+        Otherwise, recursively finds the correct position for the obstacle.
+    _insert(node, obstacle):
+        Recursively inserts an obstacle into the appropriate node. Handles duplicate coordinates
+        and splits full nodes to maintain balance.
+    _split(node):
+        Splits a full node (with two data elements) into two nodes and creates a new root node
+        to maintain the 2-3 tree properties.
+    in_order(node=None):
+        Performs an in-order traversal of the tree, printing each obstacle's data.
+    range_query(x_min, x_max, y_min, y_max, node=None, result=None):
+        Returns a list of obstacles whose coordinates fall within the specified rectangular range.
+    insertarJson():
+        Reads obstacles from a JSON file using the ObstacleJson class and inserts them into the tree.
+    mostrarArbol(nodo=None, nivel=0, lado="Raíz"):
+        Prints a visual representation of the tree structure, showing each node's data and whether it is a leaf.
+    """
+    def __init__(self):
         # Constructor: inicializa el árbol sin raíz
         self.root = None
 
