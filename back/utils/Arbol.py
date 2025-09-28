@@ -10,7 +10,7 @@ class NodoAVL:
         self.altura=1
     
 class ArbolAVL:
-    """"
+    """
     AVL Tree implementation for storing and managing obstacles with spatial data.
     Attributes:
         raiz (NodoAVL): The root node of the AVL tree.
@@ -31,13 +31,15 @@ class ArbolAVL:
             Prints the nodes of the tree in in-order traversal.
         postOrden():
             Prints the nodes of the tree in post-order traversal.
+        recorridoAnchura():
+            Performs a breadth-first traversal (BFS) of the AVL tree and returns a list of visited nodes.
         consultarDistancia(x_min, x_max, y_min, y_max):
             Returns a list of obstacle data whose 'x' and 'y' values are within the specified range.
         insertarJson():
             Reads obstacle data from a JSON source and inserts each obstacle into the AVL tree.
         mostrarArbol(nodo=None, nivel=0, lado="Raíz"):
             Recursively prints the structure of the tree for visualization and debugging purposes.
-        """
+    """
     def __init__(self):
         self.raiz=None
     
@@ -113,7 +115,7 @@ class ArbolAVL:
     def _preOrden(self,nodo):
         if not nodo:
             return
-        print(nodo)
+        print(nodo.datos)
         self._preOrden(nodo.izquierda)
         self._preOrden(nodo.derecha)
     
@@ -124,7 +126,7 @@ class ArbolAVL:
         if not nodo:
             return
         self._inOrden(nodo.izquierda)
-        print(nodo)
+        print(nodo.datos)
         self._inOrden(nodo.derecha)
 
     def postOrden(self):
@@ -135,12 +137,23 @@ class ArbolAVL:
             return
         self._postOrden(nodo.izquierda)
         self._postOrden(nodo.derecha)
-        print(nodo)
+        print(nodo.datos)
+    
+    def recorridoAnchura(self):
+        if not self.raiz:
+            return []
+        resultado = []
+        cola = [self.raiz]
+        while cola:
+            nodo = cola.pop(0)
+            resultado.append(nodo.datos)
+            if nodo.izquierda:
+                cola.append(nodo.izquierda)
+            if nodo.derecha:
+                cola.append(nodo.derecha)
+        return resultado
     
     def consultarDistancia(self, x_min, x_max, y_min, y_max):
-        """
-        Retorna una lista de obstáculos (datos) cuyos valores 'x' y 'y' están dentro del rango especificado.
-        """
         resultado = []
         self._consultarDistancia(self.raiz, x_min, x_max, y_min, y_max, resultado)
         return resultado
@@ -160,7 +173,7 @@ class ArbolAVL:
         obtacle_json=ObstacleJson()
         obstacles=obtacle_json.readJsonObstacle()
         if not obstacles:
-            return NoneW
+            return None
         else:
             for obs in obstacles:
                 self.insertar(obs['id'],obs)
@@ -174,7 +187,7 @@ class ArbolAVL:
             nodo = self.raiz
         
         if nodo is None:
-            return  # ✅ Caso base: si no hay nodo, no seguimos
+            return  
 
         # Subárbol derecho
         self.mostrarArbol(nodo.derecha, nivel + 1, "Der")
