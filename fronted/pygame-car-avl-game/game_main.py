@@ -7,6 +7,7 @@ from back.utils.Arbol import ArbolAVL
 from src.game.obstacle import ObstacleManager
 from src.game.car import Car
 from src.game.avl_visualizer import AVLVisualizer
+from src.game.visualizer23 import Visualizer23
 from back.Controller.ObstacleController import ObstacleController
 # Configuración básica
 SCREEN_WIDTH = 1200
@@ -100,6 +101,11 @@ def main():
     arbol = ArbolAVL()
     arbol.insertarJson()
     avl_visualizer = AVLVisualizer(screen, arbol)
+    visualizer23 = Visualizer23(screen)
+    visualizer23.update_tree()
+
+    # Estado para alternar visualización
+    mostrar_avl = True
 
     show_menu(screen)
 
@@ -138,14 +144,18 @@ def main():
                     car.start_jump()
 
                 # =============================
-                # Nuevo: teclas para visualizar recorridos
+                # Nuevo: teclas para visualizar recorridos y alternar árbol
                 elif event.key == pygame.K_1:
-                    recorrido_activo = "inorden"
+                    mostrar_avl = True
                 elif event.key == pygame.K_2:
-                    recorrido_activo = "preorden"
+                    mostrar_avl = False
                 elif event.key == pygame.K_3:
-                    recorrido_activo = "postorden"
+                    recorrido_activo = "inorden"
                 elif event.key == pygame.K_4:
+                    recorrido_activo = "preorden"
+                elif event.key == pygame.K_5:
+                    recorrido_activo = "postorden"
+                elif event.key == pygame.K_6:
                     recorrido_activo = "anchura"
                 # =============================
 
@@ -171,6 +181,7 @@ def main():
                 # Procesar colisiones y obstáculos pasados
                 # Procesar colisiones y obstáculos pasados
         for obs in obstacles:
+
             obs_id = obs.get("id", obs["world_x"])
 
             # 🚗 Colisión
@@ -184,16 +195,6 @@ def main():
                     arbol.insertarJson()                        # ⚡ reconstruye árbol desde JSON actualizado
                     avl_visualizer.tree = arbol
 
-            # ✅ Pasado sin colisión
-            if  obs["world_x"] + obs["rect"].width < car_x and obs["world_x"] not in obstacle_manager.consumed_world_x:
-                print(f"✔ Pasaste {obs['tipo']} (ID={obs_id})")
-                obstacle_manager.mark_obstacle_consumed(obs["world_x"])
-                obstacle_controller.deleteObstacle(obs_id)       # ⚡ elimina del JSON
-                arbol = ArbolAVL()
-                arbol.insertarJson()                            # ⚡ reconstruye árbol desde JSON actualizado
-                avl_visualizer.tree = arbol
-
-
         # Barra de energía
         bar_x, bar_y, bar_w, bar_h = 10, 10, 200, 16
         pygame.draw.rect(screen, (100, 100, 100), (bar_x, bar_y, bar_w, bar_h))
@@ -202,15 +203,20 @@ def main():
 
         car.render(screen)
 
-        # AVL
-        avl_surface = screen.subsurface((GAMA_WIDTH, 0, SCREEN_WIDTH - GAMA_WIDTH, SCREEN_HEIGHT))
-        avl_surface.fill((0, 0, 0))
-        avl_visualizer.screen = avl_surface
-        avl_visualizer.visualize()
+        # Visualización de árbol
+        tree_surface = screen.subsurface((GAMA_WIDTH, 0, SCREEN_WIDTH - GAMA_WIDTH, SCREEN_HEIGHT))
+        tree_surface.fill((0, 0, 0))
+        if mostrar_avl:
+            avl_visualizer.screen = tree_surface
+            avl_visualizer.visualize()
+        else:
+            visualizer23.screen = tree_surface
+            visualizer23.update_tree()
+            visualizer23.draw()
 
         # =============================
-        # Mostrar recorrido si está activo
-        if recorrido_activo:
+        # Mostrar recorrido si está activo (solo AVL)
+        if mostrar_avl and recorrido_activo:
             if recorrido_activo == "inorden":
                 avl_visualizer.recorrido_inorden_visual(arbol.raiz)
             elif recorrido_activo == "preorden":

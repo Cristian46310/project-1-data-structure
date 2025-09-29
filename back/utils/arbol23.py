@@ -3,10 +3,9 @@ import json  # Importa la librería para manejar archivos JSON
 # Clase que representa un nodo del árbol 2-3
 class Node:
     def __init__(self, data=None):
-        # Constructor: inicializa el nodo con datos y lo marca como hoja
-        self.data = [] if data is None else [data]  # Lista de obstáculos (máximo 2)
-        self.children = []  # Lista de hijos (0, 2 o 3 dependiendo del tipo de nodo)
-        self.is_leaf = True  # Por defecto, el nodo es una hoja
+        self.data = [] if data is None else [data]
+        self.children = []
+        self.is_leaf = True
 
     def is_full(self):
         # Verifica si el nodo tiene 2 datos (nodo 3)
@@ -50,34 +49,67 @@ class Tree23:
     def insert(self, obstacle):
         # Inserta un obstáculo en el árbol
         if self.root is None:
-            # Si el árbol está vacío, crea la raíz con el obstáculo
             self.root = Node(obstacle)
         else:
-            # Inserta recursivamente en el árbol
-            self.root = self._insert(self.root, obstacle)
+            result = self._insert(self.root, obstacle)
+            # Si el split sube un nuevo nodo, actualiza la raíz
+            if isinstance(result, tuple):
+                # (middle, left, right)
+                middle, left, right = result
+                new_root = Node(middle)
+                new_root.is_leaf = False
+                new_root.children = [left, right]
+                self.root = new_root
+            else:
+                self.root = result
 
     def _insert(self, node, obstacle):
-        # Método recursivo que inserta en el nodo adecuado
         if node.is_leaf:
-            # Si es hoja, verifica si ya existe un obstáculo en esa posición
             for obj in node.data:
-                if (obj['x0'], obj['y0'], obj['x1'], obj['y1']) == (obstacle['x0'], obstacle['y0'], obstacle['x1'], obstacle['y1']):
-                    print("❌ Coordenadas duplicadas. No se inserta.")
+                if (
+                    obj.get('x0') == obstacle.get('x0') and
+                    obj.get('y0') == obstacle.get('y0') and
+                    obj.get('x1') == obstacle.get('x1') and
+                    obj.get('y1') == obstacle.get('y1')
+                ):
+                    print(" Coordenadas duplicadas. No se inserta.")
                     return node
-            # Inserta el obstáculo
             node.insert_data(obstacle)
-            # Si el nodo está lleno (2 datos), se divide para balancear
-            if node.is_full():
-                return self._split(node)
+            if len(node.data) > 2:
+                # Split leaf: return (middle, left, right)
+                left = Node(node.data[0])
+                right = Node(node.data[2])
+                middle = node.data[1]
+                return (middle, left, right)
             return node
         else:
-            # Si no es hoja, decide en qué hijo insertar según el ID
+            # Asegurar hijos
+            while len(node.children) < len(node.data) + 1:
+                node.children.append(Node())
+            # Decidir a qué hijo insertar
             if obstacle['id'] < node.data[0]['id']:
-                node.children[0] = self._insert(node.children[0], obstacle)
+                idx = 0
             elif len(node.data) == 1 or obstacle['id'] < node.data[1]['id']:
-                node.children[1] = self._insert(node.children[1], obstacle)
+                idx = 1
             else:
-                node.children[2] = self._insert(node.children[2], obstacle)
+                idx = 2
+            result = self._insert(node.children[idx], obstacle)
+            if isinstance(result, tuple):
+                # Split hijo: insertar middle en este nodo
+                middle, left, right = result
+                node.data.insert(idx, middle)
+                node.children[idx] = left
+                node.children.insert(idx + 1, right)
+                if len(node.data) > 2:
+                    # Split este nodo
+                    left_node = Node(node.data[0])
+                    right_node = Node(node.data[2])
+                    left_node.is_leaf = False
+                    right_node.is_leaf = False
+                    left_node.children = node.children[:2]
+                    right_node.children = node.children[2:]
+                    middle = node.data[1]
+                    return (middle, left_node, right_node)
             return node
 
     def _split(self, node):

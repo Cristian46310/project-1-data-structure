@@ -44,18 +44,19 @@ class ArbolAVL:
         self.raiz=None
     
     # Obtener la altura de un nodo
+    # Devuelve la altura de un nodo (o 0 si es None)
     def altura(self,nodo):
         if not nodo:
             return 0
         return nodo.altura
     
-    # Obtener el factor de balance de un nodo
+    # Calcula el factor de balance de un nodo (altura izquierda - altura derecha)
     def obtenerFactorBalance(self,nodo):
         if not nodo:
             return 0
         return self.altura(nodo.izquierda)-self.altura(nodo.derecha)
     
-    #Rotaciones
+    # Realiza una rotación simple a la derecha
     def rotacionDerecha(self,y):
         x=y.izquierda
         T2=x.derecha
@@ -63,11 +64,13 @@ class ArbolAVL:
         x.derecha=y
         y.izquierda=T2
         
+        # Actualiza alturas
         y.altura=1+max(self.altura(y.izquierda),self.altura(y.derecha))
         x.altura=1+max(self.altura(x.izquierda),self.altura(x.derecha))
         
         return x
     
+    # Realiza una rotación simple a la izquierda
     def rotacionIzquierda(self,x):
         y=x.derecha
         T2=y.izquierda
@@ -75,14 +78,17 @@ class ArbolAVL:
         y.izquierda=x
         x.derecha=T2
         
+        # Actualiza alturas
         x.altura=1+max(self.altura(x.izquierda),self.altura(x.derecha))
         y.altura=1+max(self.altura(y.izquierda),self.altura(y.derecha))
         
         return y
     
+    # Inserta un nodo en el árbol AVL
     def insertar(self,clave,datos):
         self.raiz=self._insertar(self.raiz,clave,datos)
     
+    # Función recursiva para insertar y balancear el árbol
     def _insertar(self,nodo,clave,datos):
         if not nodo:
             return NodoAVL(clave,datos)
@@ -93,21 +99,29 @@ class ArbolAVL:
         else:
             return nodo
         
+        # Actualiza la altura del nodo actual
         nodo.altura=1+max(self.altura(nodo.izquierda),self.altura(nodo.derecha))
         
+        # Calcula el factor de balance y realiza rotaciones si es necesario
         factorBalance=self.obtenerFactorBalance(nodo)
         
+        # Rotación izquierda-derecha
         if factorBalance>1 and clave< nodo.izquierda.clave:
             return self.rotacionDerecha(nodo)
+        # Rotación derecha-izquierda
         if factorBalance<-1 and clave> nodo.derecha.clave:
             return self.rotacionIzquierda(nodo)
+        # Rotación doble izquierda-derecha
         if factorBalance>1 and clave> nodo.izquierda.clave:
             nodo.izquierda=self.rotacionIzquierda(nodo.izquierda)
             return self.rotacionDerecha(nodo)
+        # Rotación doble derecha-izquierda
         if factorBalance<-1 and clave< nodo.derecha.clave:
             nodo.derecha=self.rotacionDerecha(nodo.derecha)
             return self.rotacionIzquierda(nodo)
         return nodo
+
+    # Elimina un nodo por clave (id)
     def eliminar(self, key):
         """
         Elimina un nodo del árbol AVL por su clave (id o world_x según cómo lo uses).
@@ -115,6 +129,7 @@ class ArbolAVL:
         if hasattr(self, "root") and self.root is not None:
             self.root = self._eliminar_rec(self.root, key)
 
+    # Función recursiva para eliminar y rebalancear
     def _eliminar_rec(self, nodo, key):
         if nodo is None:
             return None
@@ -140,15 +155,19 @@ class ArbolAVL:
         nodo = self._rebalance(nodo)
         return nodo
 
+    # Busca el nodo con el valor mínimo en un subárbol
     def _min_value_node(self, nodo):
         current = nodo
         while current.left is not None:
             current = current.left
         return current
 
+    # Rebalancea el árbol después de eliminar
     def _rebalance(self, nodo):
         # tu código de rebalanceo AVL aquí
         return nodo
+
+    # Recorrido preorden (raíz, izquierda, derecha)
     def preOrden(self):
         self._preOrden(self.raiz)
     
@@ -159,6 +178,7 @@ class ArbolAVL:
         self._preOrden(nodo.izquierda)
         self._preOrden(nodo.derecha)
     
+    # Recorrido inorden (izquierda, raíz, derecha)
     def inOrden(self):
         self._inOrden(self.raiz)
     
@@ -169,6 +189,7 @@ class ArbolAVL:
         print(nodo.datos)
         self._inOrden(nodo.derecha)
 
+    # Recorrido postorden (izquierda, derecha, raíz)
     def postOrden(self):
         self._postOrden(self.raiz)
 
@@ -179,6 +200,7 @@ class ArbolAVL:
         self._postOrden(nodo.derecha)
         print(nodo.datos)
     
+    # Recorrido por niveles (anchura/BFS)
     def recorridoAnchura(self):
         if not self.raiz:
             return []
@@ -193,11 +215,13 @@ class ArbolAVL:
                 cola.append(nodo.derecha)
         return resultado
     
+    # Consulta obstáculos dentro de un rango de coordenadas
     def consultarDistancia(self, x_min, x_max, y_min, y_max):
         resultado = []
         self._consultarDistancia(self.raiz, x_min, x_max, y_min, y_max, resultado)
         return resultado
 
+    # Función recursiva para consultar obstáculos en rango
     def _consultarDistancia(self, nodo, x_min, x_max, y_min, y_max, resultado):
         if not nodo:
             return
@@ -209,6 +233,7 @@ class ArbolAVL:
         self._consultarDistancia(nodo.izquierda, x_min, x_max, y_min, y_max, resultado)
         self._consultarDistancia(nodo.derecha, x_min, x_max, y_min, y_max, resultado)
     
+    # Inserta obstáculos desde un archivo JSON
     def insertarJson(self):
         obtacle_json=ObstacleJson()
         obstacles=obtacle_json.readJsonObstacle()
@@ -220,21 +245,5 @@ class ArbolAVL:
             return self.raiz
         
 
-        #FUNCION INUTIL SOLO PARA VERIFICAR QUE EL ARBOL ESTA BIEN, SE BORRARA AL FINAL DEL PROYECTO
-    def mostrarArbol(self, nodo=None, nivel=0, lado="Raíz"):
-        # Solo en la primera llamada tomamos la raíz
-        if nodo is None and nivel == 0:
-            nodo = self.raiz
-        
-        if nodo is None:
-            return  
 
-        # Subárbol derecho
-        self.mostrarArbol(nodo.derecha, nivel + 1, "Der")
-
-        # Nodo actual
-        print("    " * nivel + f"[{lado}] id={nodo.clave}, datos={nodo.datos}")
-
-        # Subárbol izquierdo
-        self.mostrarArbol(nodo.izquierda, nivel + 1, "Izq")
         
