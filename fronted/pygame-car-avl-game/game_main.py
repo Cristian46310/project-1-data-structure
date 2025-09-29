@@ -116,6 +116,11 @@ def main():
     ADVANCE_EVENT = pygame.USEREVENT + 1
     pygame.time.set_timer(ADVANCE_EVENT, 200)
 
+    # =============================
+    # Nuevo: bandera para activar recorridos
+    recorrido_activo = None
+    # =============================
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -131,9 +136,22 @@ def main():
                         car.rect.y = CARRILES_Y[lane]
                 elif event.key == pygame.K_SPACE:
                     car.start_jump()
+
+                # =============================
+                # Nuevo: teclas para visualizar recorridos
+                elif event.key == pygame.K_1:
+                    recorrido_activo = "inorden"
+                elif event.key == pygame.K_2:
+                    recorrido_activo = "preorden"
+                elif event.key == pygame.K_3:
+                    recorrido_activo = "postorden"
+                elif event.key == pygame.K_4:
+                    recorrido_activo = "anchura"
+                # =============================
+
             elif event.type == ADVANCE_EVENT:
                 score += 1
-                car_x += 80
+                car_x += 40
 
         if not car.is_jumping:
             car.rect.y = CARRILES_Y[lane]
@@ -150,16 +168,31 @@ def main():
         obstacles = obstacle_manager.get_obstacles()
 
         # Procesar colisiones
+                # Procesar colisiones y obstáculos pasados
+                # Procesar colisiones y obstáculos pasados
         for obs in obstacles:
+            obs_id = obs.get("id", obs["world_x"])
+
+            # 🚗 Colisión
             if car.get_rect().colliderect(obs["rect"]):
                 applied = car.hit(obs["damage"])
                 if applied:
-                    print(f"💥 Colisión con {obs['tipo']} (ID={obs.get('id', obs['world_x'])})")
+                    print(f"💥 Colisión con {obs['tipo']} (ID={obs_id})")
                     obstacle_manager.mark_obstacle_consumed(obs["world_x"])
-                    obstacle_controller.deleteObstacle(obs.get("id", obs["world_x"]))
+                    obstacle_controller.deleteObstacle(obs_id)   # ⚡ elimina del JSON
                     arbol = ArbolAVL()
-                    arbol.insertarJson()
+                    arbol.insertarJson()                        # ⚡ reconstruye árbol desde JSON actualizado
                     avl_visualizer.tree = arbol
+
+            # ✅ Pasado sin colisión
+            if  obs["world_x"] + obs["rect"].width < car_x and obs["world_x"] not in obstacle_manager.consumed_world_x:
+                print(f"✔ Pasaste {obs['tipo']} (ID={obs_id})")
+                obstacle_manager.mark_obstacle_consumed(obs["world_x"])
+                obstacle_controller.deleteObstacle(obs_id)       # ⚡ elimina del JSON
+                arbol = ArbolAVL()
+                arbol.insertarJson()                            # ⚡ reconstruye árbol desde JSON actualizado
+                avl_visualizer.tree = arbol
+
 
         # Barra de energía
         bar_x, bar_y, bar_w, bar_h = 10, 10, 200, 16
@@ -176,6 +209,19 @@ def main():
         avl_visualizer.visualize()
 
         # =============================
+        # Mostrar recorrido si está activo
+        if recorrido_activo:
+            if recorrido_activo == "inorden":
+                avl_visualizer.recorrido_inorden_visual(arbol.raiz)
+            elif recorrido_activo == "preorden":
+                avl_visualizer.recorrido_preorden_visual(arbol.raiz)
+            elif recorrido_activo == "postorden":
+                avl_visualizer.recorrido_postorden_visual(arbol.raiz)
+            elif recorrido_activo == "anchura":
+                avl_visualizer.recorrido_anchura_visual()
+            recorrido_activo = None  # Resetear después de mostrar
+        # =============================
+
         # Comprobar derrota
         if car.energy <= 0:
             font = pygame.font.SysFont(None, 50)
@@ -205,4 +251,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main() # end main
+    main()

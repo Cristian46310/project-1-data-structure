@@ -18,6 +18,9 @@ class AVLVisualizer:
         if node is None:
             return
 
+        node.pos_x = x
+        node.pos_y = y
+
         # dibujar nodo
         draw.circle(self.screen, (0, 255, 0), (x, y), self.node_radius)
         text_surface = self.font.render(str(node.clave), True, (255, 255, 255))
@@ -38,6 +41,15 @@ class AVLVisualizer:
             draw.line(self.screen, (255, 255, 255),
                       (x, y + self.node_radius), (right_x, right_y), 2)
             self.draw_tree(node.derecha, right_x, right_y, x_offset // 2, level_gap)
+
+    def highlight_node(self, node, color=(255, 0, 0)):
+        self.visualize()  # Redibuja el árbol
+        pygame.draw.circle(self.screen, color, (node.pos_x, node.pos_y), self.node_radius)
+        text_surface = self.font.render(str(node.clave), True, (255, 255, 255))
+        self.screen.blit(text_surface, (node.pos_x - text_surface.get_width() // 2,
+                                        node.pos_y - text_surface.get_height() // 2))
+        pygame.display.flip()
+        pygame.time.delay(600)  # pausa de 600ms
 
     def visualize(self):
         self.screen.fill((0, 0, 0))
@@ -75,3 +87,35 @@ class AVLVisualizer:
                     waiting = False
                 elif event.type == pygame.KEYDOWN:
                     waiting = False
+    def recorrido_inorden_visual(self, nodo):
+        if nodo is None:
+            return
+        self.recorrido_inorden_visual(nodo.izquierda)
+        self.highlight_node(nodo)
+        self.recorrido_inorden_visual(nodo.derecha)
+
+    def recorrido_preorden_visual(self, nodo):
+        if nodo is None:
+            return
+        self.highlight_node(nodo)
+        self.recorrido_preorden_visual(nodo.izquierda)
+        self.recorrido_preorden_visual(nodo.derecha)
+
+    def recorrido_postorden_visual(self, nodo):
+        if nodo is None:
+            return
+        self.recorrido_postorden_visual(nodo.izquierda)
+        self.recorrido_postorden_visual(nodo.derecha)
+        self.highlight_node(nodo)
+
+    def recorrido_anchura_visual(self):
+        if not self.tree.raiz:
+            return
+        cola = [self.tree.raiz]
+        while cola:
+            nodo = cola.pop(0)
+            self.highlight_node(nodo)
+            if nodo.izquierda:
+                cola.append(nodo.izquierda)
+            if nodo.derecha:
+                cola.append(nodo.derecha)
