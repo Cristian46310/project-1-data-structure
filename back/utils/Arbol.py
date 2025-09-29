@@ -78,7 +78,47 @@ class ArbolAVL:
             nodo.derecha=self.rotacionDerecha(nodo.derecha)
             return self.rotacionIzquierda(nodo)
         return nodo
-    
+    def eliminar(self, key):
+        """
+        Elimina un nodo del árbol AVL por su clave (id o world_x según cómo lo uses).
+        """
+        if hasattr(self, "root") and self.root is not None:
+            self.root = self._eliminar_rec(self.root, key)
+
+    def _eliminar_rec(self, nodo, key):
+        if nodo is None:
+            return None
+
+        if key < nodo.key:
+            nodo.left = self._eliminar_rec(nodo.left, key)
+        elif key > nodo.key:
+            nodo.right = self._eliminar_rec(nodo.right, key)
+        else:
+            # nodo a eliminar encontrado
+            if nodo.left is None:
+                return nodo.right
+            elif nodo.right is None:
+                return nodo.left
+
+            # reemplazar con el mínimo del subárbol derecho
+            min_larger_node = self._min_value_node(nodo.right)
+            nodo.key = min_larger_node.key
+            nodo.data = min_larger_node.data
+            nodo.right = self._eliminar_rec(nodo.right, min_larger_node.key)
+
+        # actualizar altura y balance aquí si usas AVL
+        nodo = self._rebalance(nodo)
+        return nodo
+
+    def _min_value_node(self, nodo):
+        current = nodo
+        while current.left is not None:
+            current = current.left
+        return current
+
+    def _rebalance(self, nodo):
+        # tu código de rebalanceo AVL aquí
+        return nodo
     def preOrden(self):
         self._preOrden(self.raiz)
     

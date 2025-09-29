@@ -30,10 +30,9 @@ class ObstacleJson:
                     obstacles = json.load(file)
         for obs in ObstacleExist:
             if (obs['x1'] == newObstacle['x1'] and obs['x0'] == newObstacle['x0']) :
-                print(f'{newObstacle['id']} ya existe en esa posición x')
-                return
+                print(f"{newObstacle['id']} ya existe en esa posición x")
             if obs['id'] == newObstacle['id']:
-                print(f'id {newObstacle['id']} del obstáculo ya existe')
+                print(f"id {newObstacle['id']} del obstáculo ya existe")
                 return
         obstacles.append(newObstacle)
         self.saveObstacle(obstacles)
