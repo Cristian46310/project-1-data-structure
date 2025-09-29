@@ -18,7 +18,7 @@ class Car:
         self.invulnerability_ms = 600
 
         # Cargar sonido de salto
-        jump_sound_path = os.path.join(assets_path, "jump.mp3")#coloca tu archivo jump.wav en assets
+        jump_sound_path = os.path.join(assets_path, "jump.mp3")
         if os.path.exists(jump_sound_path):
             self.jump_sound = pygame.mixer.Sound(jump_sound_path)
         else:

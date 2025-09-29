@@ -53,9 +53,10 @@ class Tree23:
         else:
             result = self._insert(self.root, obstacle)
             # Si el split sube un nuevo nodo, actualiza la raíz
-            if isinstance(result, tuple):
-                # (middle, left, right)
-                middle, left, right = result
+            if type(result) is dict and result.get("split"):
+                middle = result["middle"]
+                left = result["left"]
+                right = result["right"]
                 new_root = Node(middle)
                 new_root.is_leaf = False
                 new_root.children = [left, right]
@@ -76,17 +77,14 @@ class Tree23:
                     return node
             node.insert_data(obstacle)
             if len(node.data) > 2:
-                # Split leaf: return (middle, left, right)
                 left = Node(node.data[0])
                 right = Node(node.data[2])
                 middle = node.data[1]
-                return (middle, left, right)
+                return {"split": True, "middle": middle, "left": left, "right": right}
             return node
         else:
-            # Asegurar hijos
             while len(node.children) < len(node.data) + 1:
                 node.children.append(Node())
-            # Decidir a qué hijo insertar
             if obstacle['id'] < node.data[0]['id']:
                 idx = 0
             elif len(node.data) == 1 or obstacle['id'] < node.data[1]['id']:
@@ -94,14 +92,14 @@ class Tree23:
             else:
                 idx = 2
             result = self._insert(node.children[idx], obstacle)
-            if isinstance(result, tuple):
-                # Split hijo: insertar middle en este nodo
-                middle, left, right = result
+            if type(result) is dict and result.get("split"):
+                middle = result["middle"]
+                left = result["left"]
+                right = result["right"]
                 node.data.insert(idx, middle)
                 node.children[idx] = left
                 node.children.insert(idx + 1, right)
                 if len(node.data) > 2:
-                    # Split este nodo
                     left_node = Node(node.data[0])
                     right_node = Node(node.data[2])
                     left_node.is_leaf = False
@@ -109,7 +107,7 @@ class Tree23:
                     left_node.children = node.children[:2]
                     right_node.children = node.children[2:]
                     middle = node.data[1]
-                    return (middle, left_node, right_node)
+                    return {"split": True, "middle": middle, "left": left_node, "right": right_node}
             return node
 
     def _split(self, node):

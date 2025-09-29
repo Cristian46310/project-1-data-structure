@@ -14,8 +14,7 @@ class Visualizer23:
         self.screen.fill((0, 0, 0))
         font = pygame.font.SysFont(None, 18)
 
-        # Usar subsuperficie para el área del árbol 2-3
-        GAMA_WIDTH = 0  # Ajusta si tienes una constante definida
+        GAMA_WIDTH = 0  
         SCREEN_WIDTH = self.screen.get_width()
         SCREEN_HEIGHT = self.screen.get_height()
         avl_surface = self.screen.subsurface((GAMA_WIDTH, 0, SCREEN_WIDTH - GAMA_WIDTH, SCREEN_HEIGHT))
