@@ -3,6 +3,23 @@ import os
 from back.models.Obstaculo import Obstaculos
 
 class ObstacleJson:
+    """
+    ObstacleJson is a repository class for managing obstacle data stored in a JSON file.
+    Attributes:
+        RUTA_DE_OBTACLES (str): The file path to the obstacles JSON file.
+    Methods:
+        readJsonObstacle():
+            Reads and returns the list of obstacles from the JSON file.
+            Returns an empty list if the file does not exist or is empty.
+        saveObstacle(data):
+            Saves the provided list of obstacles to the JSON file.
+        addObstacle(obstacle):
+            Adds a new obstacle to the JSON file after checking for duplicate positions or IDs.
+            Prints a message if the obstacle already exists.
+        deleteObstacle(id):
+            Deletes an obstacle with the specified ID from the JSON file.
+            Prints a message if the file does not contain any data.
+    """
     def __init__(self):
         self.RUTA_DE_OBTACLES = "back/Data/Obstacles.json"
 
